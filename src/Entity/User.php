@@ -49,6 +49,7 @@ class User
     private $lastName;
 
     /**
+     * +
      * @var \Customer
      *
      * @ORM\ManyToOne(targetEntity="Customer")
@@ -57,6 +58,11 @@ class User
      * })
      */
     private $customer;
+
+    /**
+     * @ORM\Column(type="array")
+     */
+    private $roles = [];
 
     public function getId(): ?int
     {
@@ -119,6 +125,18 @@ class User
     public function setCustomer(?Customer $customer): self
     {
         $this->customer = $customer;
+
+        return $this;
+    }
+
+    public function getRoles(): ?array
+    {
+        return $this->roles;
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
 
         return $this;
     }
