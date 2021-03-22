@@ -8,4 +8,7 @@
 /public/bundles/
 /var/
 /vendor/
+.idea
+migrations
+templates
 ###< symfony/framework-bundle ###
