@@ -2,7 +2,7 @@ version: '2'
 
 services:
   myapp:
-    image: 'docker.io/bitnami/symfony:1-debian-10'
+    image: 'bilemo'
     ports:
       - '8000:8000'
     volumes:
@@ -10,11 +10,12 @@ services:
     depends_on:
       - mysql
   mysql:
-    image: 'bitnami/mysql'
+    image: 'bilemo'
     environment:
        ALLOW_EMPTY_PASSWORD: 'yes'
        MYSQL_USER: root
        MYSQL_DATABASE: bilemo
+       MYSQL_HOST: mysql
     ports:
       - 3306:3306
   phpmyadmin:
