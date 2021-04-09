@@ -10,11 +10,9 @@ services:
     depends_on:
       - mysql
   mysql:
-    image: 'bilemo'
+    image: 'mysql'
     environment:
-       ALLOW_EMPTY_PASSWORD: 'yes'
-       MYSQL_USER: root
-       MYSQL_DATABASE: bilemo
+       MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
        MYSQL_HOST: mysql
     ports:
       - 3306:3306

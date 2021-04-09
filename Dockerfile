@@ -5,12 +5,10 @@ curl
 RUN apt install gnupg -y
 RUN apt-get install default-mysql-client -y
 
-ADD . /app/myapp
+ADD . /usr/src/myapp
 
 EXPOSE 8000
 
-WORKDIR /myapp
-CMD symfony server:start
-
+WORKDIR /usr/src/myapp
 
 
