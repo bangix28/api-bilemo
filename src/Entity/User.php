@@ -49,7 +49,7 @@ class User
     private $lastName;
 
     /**
-     * +
+     *
      * @var \Customer
      *
      * @ORM\ManyToOne(targetEntity="Customer")
