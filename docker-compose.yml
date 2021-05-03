@@ -4,9 +4,10 @@ services:
   myapp:
     image: 'bilemo'
     ports:
-      - '8000:8000'
+      - 9000:9000
     volumes:
-      - '.:/app/myapp'
+      - ./:/usr/src/myapp
+      - /var/run/php/php7.4-fpm.sock
     depends_on:
       - mysql
   mysql:
@@ -23,3 +24,13 @@ services:
       - 8080:80
     environment:
       PMA_ARBITRARY: 1
+  nginx:
+    image: 'nginx:latest'
+    depends_on:
+      - myapp
+    ports:
+      - '80:80'
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./:/usr/src/myapp
+      - /var/run/php/php7.4-fpm.sock
