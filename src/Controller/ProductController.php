@@ -45,7 +45,7 @@ class ProductController extends AbstractFOSRestController
 
     /**
      * @Rest\Get(
-     *     path="/Products/{Product}",
+     *     path="/products/{product}",
      *     name="Product_detail"
      * )
      * @Rest\View()
@@ -56,7 +56,7 @@ class ProductController extends AbstractFOSRestController
     }
     /**
      * @Rest\Post(
-     *     path="/Products",
+     *     path="/products",
      *     name="Product_create"
      * )
      * @ParamConverter("Product",converter="fos_rest.request_body")
@@ -71,12 +71,12 @@ class ProductController extends AbstractFOSRestController
         }
         $this->manager->persist($Product);
         $this->manager->flush();
-        return $this->view($Product, Response::HTTP_CREATED, ['Location' => $this->generateUrl('Product_detail', ['article' => $Product->getId()])]);
+        return $this->view($Product, Response::HTTP_CREATED, ['Location' => $this->generateUrl('Product_detail', ['product' => $Product->getId()])]);
     }
 
     /**
      * @Rest\Delete(
-     *     path="/Products/{Product}/delete",
+     *     path="/products/{Product}/delete",
      *     name="Product_delete"
      * )
      * @Rest\View(statusCode=201)
