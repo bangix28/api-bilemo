@@ -41,7 +41,7 @@ class UserController extends AbstractFOSRestController
 
     /**
      * @Rest\Post(
-     *     path="/user_register",
+     *     path="/v1/user_register",
      *     name="User_create"
      * )
      * @ParamConverter("user",converter="fos_rest.request_body")
@@ -51,17 +51,20 @@ class UserController extends AbstractFOSRestController
     {
         $data = $this->serializer->deserialize($request->getContent(),'array','json');
         $customer = $this->manager->getRepository(Customer::class)->findOneBy(array('id'=> $data['id_customer']));
-        $user->setCustomer($customer);
-        $hash_pass = $this->encoder->encodePassword($user,$user->getPassword());
-        $user->setPassword($hash_pass);
-        $error = $this->validator->validate($user);
-        if (count($error))
-        {
-            return $this->view($error, Response::HTTP_BAD_REQUEST);
+        $token = $request->headers->get('Authorization');
+        if($token === $customer->getToken() ) {
+            $user->setCustomer($customer);
+            $hash_pass = $this->encoder->encodePassword($user, $user->getPassword());
+            $user->setPassword($hash_pass);
+            $error = $this->validator->validate($user);
+            if (count($error)) {
+                return $this->view($error, Response::HTTP_BAD_REQUEST);
+            }
+            $this->manager->persist($user);
+            $this->manager->flush();
+            return $this->view($user, Response::HTTP_CREATED, ['Location' => $this->generateUrl('User_detail', ['User' => $user->getId()])]);
         }
-        $this->manager->persist($user);
-        $this->manager->flush();
-        return $this->view($user, Response::HTTP_CREATED, ['Location' => $this->generateUrl('User_detail', ['User' => $user->getId()])]);
+        return $this->view('wrong token', Response::HTTP_BAD_REQUEST);
     }
 
     /**
@@ -74,5 +77,4 @@ class UserController extends AbstractFOSRestController
     public function detailUser(User $user){
         return $user;
     }
-
 }
