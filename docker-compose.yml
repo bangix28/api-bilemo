@@ -8,6 +8,8 @@ services:
     volumes:
       - ./:/usr/src/myapp
       - /var/run/php/php7.4-fpm.sock
+      - var:/usr/src/myapp/var
+      - vendor:/usr/src/myapp/vendor
     depends_on:
       - mysql
   mysql:
@@ -34,3 +36,6 @@ services:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - ./:/usr/src/myapp
       - /var/run/php/php7.4-fpm.sock
+volumes:
+  var:
+  vendor:

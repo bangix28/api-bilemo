@@ -8,12 +8,17 @@ namespace App\Controller;
     use FOS\RestBundle\Controller\AbstractFOSRestController;
     use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
     use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+    use Symfony\Component\HttpFoundation\Request;
     use Symfony\Component\HttpFoundation\Response;
     use Symfony\Component\Routing\Annotation\Route;
     use Symfony\Component\Validator\Validator\ValidatorInterface;
     use FOS\RestBundle\Controller\Annotations as Rest;
+    use Symfony\Contracts\Cache\CacheInterface;
 
 
+    /**
+     * @Route("api/v1/products")
+     */
 class ProductController extends AbstractFOSRestController
 {
     /**
@@ -25,15 +30,18 @@ class ProductController extends AbstractFOSRestController
      */
     private $validator;
 
-    public function __construct(EntityManagerInterface $manager, ValidatorInterface $validator)
+    private $cache;
+
+    public function __construct(CacheInterface $cache,EntityManagerInterface $manager, ValidatorInterface $validator)
     {
+        $this->cache = $cache;
         $this->manager = $manager;
         $this->validator = $validator;
     }
 
     /**
      * @Rest\Get(
-     *     path="/products",
+     *     path="/",
      *     name="Product_list"
      *     )
      * @Rest\View()
@@ -45,7 +53,7 @@ class ProductController extends AbstractFOSRestController
 
     /**
      * @Rest\Get(
-     *     path="/Products/{Product}",
+     *     path="/{product}",
      *     name="Product_detail"
      * )
      * @Rest\View()
@@ -56,13 +64,13 @@ class ProductController extends AbstractFOSRestController
     }
     /**
      * @Rest\Post(
-     *     path="/Products",
+     *     path="/",
      *     name="Product_create"
      * )
      * @ParamConverter("Product",converter="fos_rest.request_body")
      * @Rest\View(statusCode=201)
      */
-    public function createProduct(Product $Product)
+    public function createProduct(Request $request,Product $Product)
     {
         $error = $this->validator->validate($Product);
         if (count($error))
@@ -71,12 +79,12 @@ class ProductController extends AbstractFOSRestController
         }
         $this->manager->persist($Product);
         $this->manager->flush();
-        return $this->view($Product, Response::HTTP_CREATED, ['Location' => $this->generateUrl('Product_detail', ['article' => $Product->getId()])]);
+        return $this->view($Product, Response::HTTP_CREATED, ['Location' => $this->generateUrl('Product_detail', ['product' => $Product->getId()])]);
     }
 
     /**
      * @Rest\Delete(
-     *     path="/Products/{Product}/delete",
+     *     path="/{Product}/delete",
      *     name="Product_delete"
      * )
      * @Rest\View(statusCode=201)
