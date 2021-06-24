@@ -51,21 +51,21 @@ class User implements UserInterface
      */
     private $lastName;
 
-    /**
-     *
-     * @var \Customer
-     *
-     * @ORM\ManyToOne(targetEntity="Customer")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="customer_id", referencedColumnName="id")
-     * })
-     */
-    private $customer;
 
     /**
      * @ORM\Column(type="array")
      */
     private $roles = [];
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Customer::class, inversedBy="User")
+     */
+    private $customer;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Customer::class, inversedBy="users")
+     */
+    private $Customer;
 
     public function getId(): ?int
     {
@@ -119,19 +119,6 @@ class User implements UserInterface
 
         return $this;
     }
-
-    public function getCustomer(): ?Customer
-    {
-        return $this->customer;
-    }
-
-    public function setCustomer(?Customer $customer): self
-    {
-        $this->customer = $customer;
-
-        return $this;
-    }
-
     public function getRoles(): ?array
     {
         return $this->roles;
@@ -176,5 +163,17 @@ class User implements UserInterface
     public function eraseCredentials()
     {
         // TODO: Implement eraseCredentials() method.
+    }
+
+    public function getCustomer(): ?Customer
+    {
+        return $this->customer;
+    }
+
+    public function setCustomer(?Customer $customer): self
+    {
+        $this->customer = $customer;
+
+        return $this;
     }
 }
