@@ -4,15 +4,17 @@ namespace App\Controller;
 
 use App\Entity\Customer;
 use App\Entity\User;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
+use FOS\RestBundle\Controller\Annotations as Rest;
 use JMS\Serializer\SerializerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use FOS\RestBundle\Controller\Annotations as Rest;
 
 
 class UserController extends AbstractFOSRestController
@@ -36,45 +38,96 @@ class UserController extends AbstractFOSRestController
         $this->manager = $manager;
         $this->validator = $validator;
         $this->encoder = $encoder;
-        $this->serializer = $serializer;
     }
 
     /**
      * @Rest\Post(
-     *     path="/v1/user_register",
+     *     path="/v1/customer/{id}/user_register",
      *     name="User_create"
      * )
      * @ParamConverter("user",converter="fos_rest.request_body")
-     * @Rest\View(statusCode=201)
+     * @Rest\View(statusCode=201, serializerGroups={"details"})
      */
-    public function api_register(Request $request,User $user)
+    public function createUser(Customer $customer, Request $request, User $user, ConstraintViolationList $violations)
     {
-        $data = $this->serializer->deserialize($request->getContent(),'array','json');
-        $customer = $this->manager->getRepository(Customer::class)->findOneBy(array('id'=> $data['id_customer']));
+        if (count($violations)) {
+            return $this->view($violations, Response::HTTP_BAD_REQUEST);
+        }
+
         $token = $request->headers->get('Authorization');
-        if($token === $customer->getToken() ) {
+        if ($token === $customer->getToken()) {
             $user->setCustomer($customer);
             $hash_pass = $this->encoder->encodePassword($user, $user->getPassword());
             $user->setPassword($hash_pass);
+            $user->setCustomer($customer);
             $error = $this->validator->validate($user);
             if (count($error)) {
                 return $this->view($error, Response::HTTP_BAD_REQUEST);
             }
             $this->manager->persist($user);
             $this->manager->flush();
-            return $this->view($user, Response::HTTP_CREATED, ['Location' => $this->generateUrl('User_detail', ['User' => $user->getId()])]);
+
+            return $this->view($user, Response::HTTP_CREATED,
+                ['Location' => $this->generateUrl('user_detail', [
+                        'customer' => $customer->getId(),
+                        'user' => $user->getId()]
+                )]);
+        }
+        return $this->view('wrong token', Response::HTTP_BAD_REQUEST);
+    }
+
+    /**
+     * @Rest\Delete (
+     *     path="/v1/customer/{customer}/user/{id}/delete",
+     *     name="User_create"
+     * )
+     * @Rest\View(statusCode=204)
+     */
+    public function deleteUser(Customer $customer, Request $request, User $user)
+    {
+        $token = $request->headers->get('Authorization');
+        if ($token === $customer->getToken()) {
+            $this->manager->remove($user);
+            $this->manager->flush();
+            return $this->view('User deleted', Response::HTTP_OK);
+
         }
         return $this->view('wrong token', Response::HTTP_BAD_REQUEST);
     }
 
     /**
      * @Rest\Get(
-     *     path="/users/{User}",
-     *     name="User_detail"
+     *     path="v1/customer/{customer}/user/{user}",
+     *     name="user_detail"
      * )
-     * @Rest\View()
+     * @Rest\View(statusCode=201, serializerGroups={"details"})
      */
-    public function detailUser(User $user){
-        return $user;
+    public function detailUser(Customer $customer, User $user, Request $request)
+    {
+        $token = $request->headers->get('Authorization');
+        if ($token === $customer->getToken()) {
+            return $this->view($user, Response::HTTP_ACCEPTED);
+        }
+        return $this->view('wrong token', Response::HTTP_BAD_REQUEST);
+    }
+
+
+    /**
+     * @Rest\Get(
+     *     path="v1/customer/{customer}/users",
+     *     name="list_user"
+     * )
+     * @Rest\View(serializerGroups={"details"})
+     */
+    public function ListUser(Customer $customer,UserRepository $userRepository,Request $request)
+    {
+        $token = $request->headers->get('Authorization');
+        if ($token === $customer->getToken()) {
+        return $this->view(array(
+            "users" => $customer->getUsers(),
+            "societe" => $customer
+        ));
+        }
+        return $this->view('wrong token', Response::HTTP_BAD_REQUEST);
     }
 }
