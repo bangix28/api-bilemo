@@ -30,11 +30,8 @@ class ProductController extends AbstractFOSRestController
      */
     private $validator;
 
-    private $cache;
-
-    public function __construct(CacheInterface $cache,EntityManagerInterface $manager, ValidatorInterface $validator)
+    public function __construct(EntityManagerInterface $manager, ValidatorInterface $validator)
     {
-        $this->cache = $cache;
         $this->manager = $manager;
         $this->validator = $validator;
     }
@@ -53,7 +50,7 @@ class ProductController extends AbstractFOSRestController
 
     /**
      * @Rest\Get(
-     *     path="/{product}",
+     *     path="/{id}",
      *     name="Product_detail"
      * )
      * @Rest\View()
@@ -61,37 +58,5 @@ class ProductController extends AbstractFOSRestController
 
     public function detailProduct(Product $Product){
         return $Product;
-    }
-    /**
-     * @Rest\Post(
-     *     path="/",
-     *     name="Product_create"
-     * )
-     * @ParamConverter("Product",converter="fos_rest.request_body")
-     * @Rest\View(statusCode=201)
-     */
-    public function createProduct(Request $request,Product $Product)
-    {
-        $error = $this->validator->validate($Product);
-        if (count($error))
-        {
-            return $this->view($error, Response::HTTP_BAD_REQUEST);
-        }
-        $this->manager->persist($Product);
-        $this->manager->flush();
-        return $this->view($Product, Response::HTTP_CREATED, ['Location' => $this->generateUrl('Product_detail', ['product' => $Product->getId()])]);
-    }
-
-    /**
-     * @Rest\Delete(
-     *     path="/{Product}/delete",
-     *     name="Product_delete"
-     * )
-     * @Rest\View(statusCode=201)
-     */
-    public function deleteProduct(Product $Product)
-    {
-        $this->manager->remove($Product);
-        $this->manager->flush();
     }
 }

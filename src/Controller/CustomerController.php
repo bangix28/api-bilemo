@@ -85,7 +85,6 @@ class CustomerController extends AbstractFOSRestController
         $this->manager->flush();
         return $this->view($customer, Response::HTTP_CREATED, ['Location' => $this->generateUrl('customer_detail', ['customer' => $customer->getId()])]);
 
-
     }
     /**
      * @Rest\Delete(
