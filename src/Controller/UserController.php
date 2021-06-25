@@ -48,7 +48,7 @@ class UserController extends AbstractFOSRestController
      * @ParamConverter("user",converter="fos_rest.request_body")
      * @Rest\View(statusCode=201, serializerGroups={"details"})
      */
-    public function api_register(Customer $customer, Request $request, User $user, ConstraintViolationList $violations)
+    public function createUser(Customer $customer, Request $request, User $user, ConstraintViolationList $violations)
     {
         if (count($violations)) {
             return $this->view($violations, Response::HTTP_BAD_REQUEST);
@@ -72,6 +72,25 @@ class UserController extends AbstractFOSRestController
                         'customer' => $customer->getId(),
                         'user' => $user->getId()]
                 )]);
+        }
+        return $this->view('wrong token', Response::HTTP_BAD_REQUEST);
+    }
+
+    /**
+     * @Rest\Delete (
+     *     path="/v1/customer/{customer}/user/{id}/delete",
+     *     name="User_create"
+     * )
+     * @Rest\View(statusCode=204)
+     */
+    public function deleteUser(Customer $customer, Request $request, User $user)
+    {
+        $token = $request->headers->get('Authorization');
+        if ($token === $customer->getToken()) {
+            $this->manager->remove($user);
+            $this->manager->flush();
+            return $this->view('User deleted', Response::HTTP_OK);
+
         }
         return $this->view('wrong token', Response::HTTP_BAD_REQUEST);
     }
