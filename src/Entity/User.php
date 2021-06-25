@@ -3,8 +3,10 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * User
@@ -20,6 +22,7 @@ class User implements UserInterface
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @Serializer\Groups({"details"})
      */
     private $id;
 
@@ -27,6 +30,9 @@ class User implements UserInterface
      * @var string
      *
      * @ORM\Column(name="email", type="string",length=255, nullable=false)
+     * @Assert\NotBlank
+     * @Assert\Email()
+     * @Serializer\Groups({"details"})
      */
     private $email;
 
@@ -34,6 +40,7 @@ class User implements UserInterface
      * @var string
      *
      * @ORM\Column(name="password", type="string", length=255, nullable=false)
+     * @Assert\NotBlank
      */
     private $password;
 
@@ -41,6 +48,9 @@ class User implements UserInterface
      * @var string
      *
      * @ORM\Column(name="first_name", type="string", length=255, nullable=false)
+     * @Assert\NotBlank
+     * @Assert\Length(max=150)
+     * @Serializer\Groups({"details"})
      */
     private $firstName;
 
@@ -48,22 +58,23 @@ class User implements UserInterface
      * @var string
      *
      * @ORM\Column(name="last_name", type="string", length=255, nullable=false)
+     * @Assert\NotBlank
+     * @Assert\Length(max=150)
+     * @Serializer\Groups({"details"})
      */
     private $lastName;
 
 
     /**
      * @ORM\Column(type="array")
+     * @Assert\NotBlank
+     * @Serializer\Groups({"details"})
      */
     private $roles = [];
 
     /**
-     * @ORM\ManyToOne(targetEntity=Customer::class, inversedBy="User")
-     */
-    private $customer;
-
-    /**
      * @ORM\ManyToOne(targetEntity=Customer::class, inversedBy="users")
+     * @Serializer\Groups({"list"})
      */
     private $Customer;
 
