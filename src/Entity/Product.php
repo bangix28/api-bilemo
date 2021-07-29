@@ -42,7 +42,6 @@ class Product
      *
      * @ORM\Column(name="price", type="integer", nullable=false)
      * @Assert\NotBlank
-     * @Assert\Length(maxMessage="500")
      */
     private $price;
 

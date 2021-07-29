@@ -15,6 +15,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use OpenApi\Annotations as OA;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
+
+
 
 
 class UserController extends AbstractFOSRestController
@@ -42,9 +47,25 @@ class UserController extends AbstractFOSRestController
 
     /**
      * @Rest\Post(
-     *     path="/v1/customer/{id}/user_register",
-     *     name="User_create"
+     *     path="v1/customers/{customer}/users",
+     *     name="user_create"
      * )
+     *  @OA\Response(
+     *     response=200,
+     *     description="Create a new User",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=User::class, groups={"details"}))
+     *     )
+     * )
+     *
+     * @OA\Parameter(
+     *     name="Authorization",
+     *     in="header",
+     *     description="Customer token",
+     *     @OA\Schema(type="string")
+     * )
+     * @OA\Tag(name="Customers")
      * @ParamConverter("user",converter="fos_rest.request_body")
      * @Rest\View(statusCode=201, serializerGroups={"details"})
      */
@@ -78,8 +99,8 @@ class UserController extends AbstractFOSRestController
 
     /**
      * @Rest\Delete (
-     *     path="/v1/customer/{customer}/user/{id}/delete",
-     *     name="User_create"
+     *     path="v1/customers/{customer}/users/{id}",
+     *     name="user_delete"
      * )
      * @Rest\View(statusCode=204)
      */
@@ -97,12 +118,12 @@ class UserController extends AbstractFOSRestController
 
     /**
      * @Rest\Get(
-     *     path="v1/customer/{customer}/user/{user}",
+     *     path="v1/customers/{customer}/user/{user}",
      *     name="user_detail"
      * )
      * @Rest\View(statusCode=201, serializerGroups={"details"})
      */
-    public function detailUser(Customer $customer, User $user, Request $request)
+    public function detailUser( Customer $customer, User $user, Request $request)
     {
         $token = $request->headers->get('Authorization');
         if ($token === $customer->getToken()) {
@@ -114,7 +135,7 @@ class UserController extends AbstractFOSRestController
 
     /**
      * @Rest\Get(
-     *     path="v1/customer/{customer}/users",
+     *     path="v1/customers/{customer}/users",
      *     name="list_user"
      * )
      * @Rest\View(serializerGroups={"details"})

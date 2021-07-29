@@ -49,7 +49,6 @@ class User implements UserInterface
      *
      * @ORM\Column(name="first_name", type="string", length=255, nullable=false)
      * @Assert\NotBlank
-     * @Assert\Length(max=150)
      * @Serializer\Groups({"details"})
      */
     private $firstName;
@@ -59,7 +58,6 @@ class User implements UserInterface
      *
      * @ORM\Column(name="last_name", type="string", length=255, nullable=false)
      * @Assert\NotBlank
-     * @Assert\Length(max=150)
      * @Serializer\Groups({"details"})
      */
     private $lastName;
