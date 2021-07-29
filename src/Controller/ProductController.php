@@ -21,20 +21,6 @@ namespace App\Controller;
      */
 class ProductController extends AbstractFOSRestController
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $manager;
-    /**
-     * @var ValidatorInterface
-     */
-    private $validator;
-
-    public function __construct(EntityManagerInterface $manager, ValidatorInterface $validator)
-    {
-        $this->manager = $manager;
-        $this->validator = $validator;
-    }
 
     /**
      * @Rest\Get(
