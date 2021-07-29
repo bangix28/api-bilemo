@@ -1,0 +1,13 @@
+nelmio_api_doc:
+    documentation:
+        info:
+            title: Bilemo
+            description: La meilleur api !
+            version: 1.0.0
+    areas: # to filter documented areas
+        path_patterns:
+            - /api/
+            - /v1/
+    media_types:
+        Content-Type: 'application/json'
+
