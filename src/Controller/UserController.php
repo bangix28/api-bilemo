@@ -20,8 +20,11 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 
 
-
-
+/**
+ * Class UserController
+ * @package App\Controller
+ * @Security(name="ApiKeyAuth")
+ */
 class UserController extends AbstractFOSRestController
 {
 
@@ -59,12 +62,6 @@ class UserController extends AbstractFOSRestController
      *     )
      * )
      *
-     * @OA\Parameter(
-     *     name="Authorization",
-     *     in="header",
-     *     description="Customer token",
-     *     @OA\Schema(type="uuid")
-     * )
      * @OA\Tag(name="Customers")
      * @ParamConverter("user",converter="fos_rest.request_body")
      * @Rest\View(statusCode=201, serializerGroups={"details"})
@@ -99,7 +96,7 @@ class UserController extends AbstractFOSRestController
 
     /**
      * @Rest\Delete (
-     *     path="v1/customers/{customer}/users/{id}",
+     *     path="v1/customers/{customer}/users/{user}",
      *     name="user_delete"
      * )
      * @OA\Response(
@@ -111,12 +108,6 @@ class UserController extends AbstractFOSRestController
      *     )
      * )
      *
-     * @OA\Parameter(
-     *     name="Authorization",
-     *     in="header",
-     *     description="Customer token",
-     *     @OA\Schema(type="uuid")
-     * )
      * @OA\Tag(name="Customers")
      * @Rest\View(statusCode=204)
      */
@@ -148,7 +139,6 @@ class UserController extends AbstractFOSRestController
      *
      * @OA\Tag(name="Customers")
      * @Rest\View(statusCode=201, serializerGroups={"details"})
-     * @Security(name="ApiKeyAuth")
      */
     public function detailUser( Customer $customer, User $user, Request $request)
     {
@@ -174,12 +164,6 @@ class UserController extends AbstractFOSRestController
      *     )
      * )
      *
-     * @OA\Parameter(
-     *     name="Authorization",
-     *     in="header",
-     *     description="Customer token",
-     *     @OA\Schema(type="uuid")
-     * )
      * @OA\Tag(name="Customers")
      * @Rest\View(serializerGroups={"details"})
      */
