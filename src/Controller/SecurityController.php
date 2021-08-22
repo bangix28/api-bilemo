@@ -15,9 +15,8 @@ class SecurityController extends AbstractFOSRestController
 
     /**
      * @Route(name="api_login",path="/api/login_check")
-     * @return JsonResponse
      */
-    public function api_login(): JsonResponse {
+    public function api_login() {
         $user = $this->GetUser();
         return new JsonResponse([
             'email' => $user->getEmail(),

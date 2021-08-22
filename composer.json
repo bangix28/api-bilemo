@@ -3,7 +3,7 @@
     "description": "Api for Openclassrooms Project",
     "type": "project",
     "license": "proprietary",
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
         "php": "^7.3",

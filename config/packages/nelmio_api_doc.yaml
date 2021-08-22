@@ -1,13 +1,23 @@
 nelmio_api_doc:
     documentation:
         info:
-            title: Bilemo
-            description: La meilleur api !
+            title: Bilemo !
+            description: Api for Openclassrooms project.
             version: 1.0.0
+        components:
+            securitySchemes:
+                Bearer:
+                    type: http
+                    scheme: bearer
+                    bearerFormat: JWT
+                ApiKeyAuth:
+                    type: apiKey
+                    in: header
+                    name: Authorization
+        security:
+            - Bearer: []
+            - ApiKeyAuth: []
     areas: # to filter documented areas
         path_patterns:
-            - /api/
+            - /api/v1
             - /v1/
-    media_types:
-        Content-Type: 'application/json'
-

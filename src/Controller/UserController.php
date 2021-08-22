@@ -63,7 +63,7 @@ class UserController extends AbstractFOSRestController
      *     name="Authorization",
      *     in="header",
      *     description="Customer token",
-     *     @OA\Schema(type="string")
+     *     @OA\Schema(type="uuid")
      * )
      * @OA\Tag(name="Customers")
      * @ParamConverter("user",converter="fos_rest.request_body")
@@ -102,6 +102,22 @@ class UserController extends AbstractFOSRestController
      *     path="v1/customers/{customer}/users/{id}",
      *     name="user_delete"
      * )
+     * @OA\Response(
+     *     response=200,
+     *     description="Delete User",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=User::class, groups={"details"}))
+     *     )
+     * )
+     *
+     * @OA\Parameter(
+     *     name="Authorization",
+     *     in="header",
+     *     description="Customer token",
+     *     @OA\Schema(type="uuid")
+     * )
+     * @OA\Tag(name="Customers")
      * @Rest\View(statusCode=204)
      */
     public function deleteUser(Customer $customer, Request $request, User $user)
@@ -121,7 +137,18 @@ class UserController extends AbstractFOSRestController
      *     path="v1/customers/{customer}/user/{user}",
      *     name="user_detail"
      * )
+     * @OA\Response(
+     *     response=200,
+     *     description="Fetch details of user link to customer",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=User::class, groups={"details"}))
+     *     )
+     * )
+     *
+     * @OA\Tag(name="Customers")
      * @Rest\View(statusCode=201, serializerGroups={"details"})
+     * @Security(name="ApiKeyAuth")
      */
     public function detailUser( Customer $customer, User $user, Request $request)
     {
@@ -138,6 +165,22 @@ class UserController extends AbstractFOSRestController
      *     path="v1/customers/{customer}/users",
      *     name="list_user"
      * )
+     * @OA\Response(
+     *     response=200,
+     *     description="List User of customer",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=User::class, groups={"details"}))
+     *     )
+     * )
+     *
+     * @OA\Parameter(
+     *     name="Authorization",
+     *     in="header",
+     *     description="Customer token",
+     *     @OA\Schema(type="uuid")
+     * )
+     * @OA\Tag(name="Customers")
      * @Rest\View(serializerGroups={"details"})
      */
     public function ListUser(Customer $customer,UserRepository $userRepository,Request $request)
