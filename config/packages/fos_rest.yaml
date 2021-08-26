@@ -5,15 +5,15 @@ fos_rest:
 #    routing_loader: true
     view:
         view_response_listener:  true
-#    exception:
-#        codes:
-#            App\Exception\MyException: 403
-#        messages:
-#            App\Exception\MyException: Forbidden area.
     body_converter:
         enabled: true
         validate: true
-        validation_errors_argument: violations
+        validation_errors_argument: validationErrors
     format_listener:
         rules:
             - { path: ^/, prefer_extension: true, fallback_format: json, priorities: [ json, html ] }
+            -
+    exception:
+        enabled: true
+        messages: { App\Exception\RessourceException: true }
+        codes: { App\Exception\RessourceException: 400, \Exception: 429 }
