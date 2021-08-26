@@ -37,8 +37,8 @@
         "symfony/yaml": "5.2.*"
     },
     "require-dev": {
-        "roave/security-advisories": "dev-latest"
-        ,
+        "doctrine/doctrine-fixtures-bundle": "^3.4",
+        "roave/security-advisories": "dev-latest",
         "symfony/maker-bundle": "^1.25"
     },
     "config": {

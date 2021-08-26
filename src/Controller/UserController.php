@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Customer;
 use App\Entity\User;
+use App\Exception\RessourceException;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -20,8 +21,11 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 
 
-
-
+/**
+ * Class UserController
+ * @package App\Controller
+ * @Security(name="ApiKeyAuth")
+ */
 class UserController extends AbstractFOSRestController
 {
 
@@ -36,9 +40,7 @@ class UserController extends AbstractFOSRestController
 
     private $encoder;
 
-    private $serializer;
-
-    public function __construct(EntityManagerInterface $manager, ValidatorInterface $validator, UserPasswordEncoderInterface $encoder, SerializerInterface $serializer)
+    public function __construct(EntityManagerInterface $manager, ValidatorInterface $validator, UserPasswordEncoderInterface $encoder)
     {
         $this->manager = $manager;
         $this->validator = $validator;
@@ -59,15 +61,9 @@ class UserController extends AbstractFOSRestController
      *     )
      * )
      *
-     * @OA\Parameter(
-     *     name="Authorization",
-     *     in="header",
-     *     description="Customer token",
-     *     @OA\Schema(type="uuid")
-     * )
-     * @OA\Tag(name="Customers")
      * @ParamConverter("user",converter="fos_rest.request_body")
      * @Rest\View(statusCode=201, serializerGroups={"details"})
+     * @OA\Tag(name="Customers")
      */
     public function createUser(Customer $customer, Request $request, User $user, ConstraintViolationList $violations)
     {
@@ -99,7 +95,7 @@ class UserController extends AbstractFOSRestController
 
     /**
      * @Rest\Delete (
-     *     path="v1/customers/{customer}/users/{id}",
+     *     path="v1/customers/{customer}/users/{user}",
      *     name="user_delete"
      * )
      * @OA\Response(
@@ -111,12 +107,6 @@ class UserController extends AbstractFOSRestController
      *     )
      * )
      *
-     * @OA\Parameter(
-     *     name="Authorization",
-     *     in="header",
-     *     description="Customer token",
-     *     @OA\Schema(type="uuid")
-     * )
      * @OA\Tag(name="Customers")
      * @Rest\View(statusCode=204)
      */
@@ -148,7 +138,6 @@ class UserController extends AbstractFOSRestController
      *
      * @OA\Tag(name="Customers")
      * @Rest\View(statusCode=201, serializerGroups={"details"})
-     * @Security(name="ApiKeyAuth")
      */
     public function detailUser( Customer $customer, User $user, Request $request)
     {
@@ -174,12 +163,6 @@ class UserController extends AbstractFOSRestController
      *     )
      * )
      *
-     * @OA\Parameter(
-     *     name="Authorization",
-     *     in="header",
-     *     description="Customer token",
-     *     @OA\Schema(type="uuid")
-     * )
      * @OA\Tag(name="Customers")
      * @Rest\View(serializerGroups={"details"})
      */
