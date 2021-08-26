@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Customer;
 use App\Entity\User;
+use App\Exception\RessourceException;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -39,9 +40,7 @@ class UserController extends AbstractFOSRestController
 
     private $encoder;
 
-    private $serializer;
-
-    public function __construct(EntityManagerInterface $manager, ValidatorInterface $validator, UserPasswordEncoderInterface $encoder, SerializerInterface $serializer)
+    public function __construct(EntityManagerInterface $manager, ValidatorInterface $validator, UserPasswordEncoderInterface $encoder)
     {
         $this->manager = $manager;
         $this->validator = $validator;
@@ -62,9 +61,9 @@ class UserController extends AbstractFOSRestController
      *     )
      * )
      *
-     * @OA\Tag(name="Customers")
      * @ParamConverter("user",converter="fos_rest.request_body")
      * @Rest\View(statusCode=201, serializerGroups={"details"})
+     * @OA\Tag(name="Customers")
      */
     public function createUser(Customer $customer, Request $request, User $user, ConstraintViolationList $violations)
     {
