@@ -17,7 +17,7 @@ class SecurityController extends AbstractFOSRestController
 {
 
     /**
-     * @Rest\Get(
+     * @Rest\Post(
      *     path="/api/login_check",
      *     name="api_login"
      *     )
@@ -25,6 +25,10 @@ class SecurityController extends AbstractFOSRestController
      *     response=200,
      *     description="Donne un token Bearer"
      * )
+     * @OA\RequestBody(
+     *          required=true,
+     *          @OA\JsonContent(ref="#/components/schemas/User")
+     *      ),
      * @OA\Tag(name="Login")
      */
     public function api_login() {
