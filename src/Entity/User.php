@@ -32,7 +32,7 @@ class User implements UserInterface
      * @ORM\Column(name="email", type="string",length=255, nullable=false)
      * @Assert\NotBlank
      * @Assert\Email()
-     * @Serializer\Groups({"details"})
+     * @Serializer\Groups({"details","login"})
      */
     private $email;
 
@@ -40,6 +40,7 @@ class User implements UserInterface
      * @var string
      *
      * @ORM\Column(name="password", type="string", length=255, nullable=false)
+     *@Serializer\Groups({"login"})
      * @Assert\NotBlank
      */
     private $password;

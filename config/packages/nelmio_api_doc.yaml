@@ -22,3 +22,5 @@ nelmio_api_doc:
             - api/login_check
             - /api/v1
             - /v1/
+    models:
+        names: [{ alias: User,  type: App\Entity\User, groups: [ login ] }]
