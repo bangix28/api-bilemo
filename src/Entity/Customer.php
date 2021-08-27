@@ -58,9 +58,10 @@ class Customer implements UserInterface
     private $users;
 
     /**
-     * @ORM\Column(type="uuid", unique=true)
+     * @ORM\Column(type="text")
      */
     private $token;
+
 
     public function __construct()
     {
@@ -148,19 +149,7 @@ class Customer implements UserInterface
 
         return $this;
     }
-
-    public function getToken(): ?string
-    {
-        return $this->token;
-    }
-
-    public function setToken(string $token): self
-    {
-        $this->token = $token;
-
-        return $this;
-    }
-
+    
     public function getSalt()
     {
         // TODO: Implement getSalt() method.
@@ -174,5 +163,17 @@ class Customer implements UserInterface
     public function eraseCredentials()
     {
         // TODO: Implement eraseCredentials() method.
+    }
+
+    public function getToken()
+    {
+        return $this->token;
+    }
+
+    public function setToken($token): self
+    {
+        $this->token = $token;
+
+        return $this;
     }
 }

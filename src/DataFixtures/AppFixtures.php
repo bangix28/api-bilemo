@@ -9,6 +9,7 @@ use Doctrine\Persistence\ObjectManager;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidV4Generator;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
+
 class AppFixtures extends Fixture
 {
     private $encoder;
@@ -35,7 +36,8 @@ class AppFixtures extends Fixture
             ->setName('admin')
             ->setRoles(array('test'));
         $customer->setPassword($this->encoder->encodePassword($customer, "root"));
-        $customer->setToken($tokenGenerator->generate($manager, $customer));
+        $token = $tokenGenerator->generate($manager, $customer);
+        $customer->setToken($token);
 
         $manager->persist($customer);
 
