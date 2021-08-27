@@ -4,12 +4,10 @@ namespace App\Controller;
 
 use App\Entity\Customer;
 use App\Entity\User;
-use App\Exception\RessourceException;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
-use JMS\Serializer\SerializerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -65,9 +63,10 @@ class UserController extends AbstractFOSRestController
      * @Rest\View(statusCode=201, serializerGroups={"details"})
      * @OA\Tag(name="Customers")
      */
-    public function createUser(Customer $customer, Request $request, User $user, ConstraintViolationList $violations)
+    public function createUser(Customer $customer, Request $request, User $user, ValidatorInterface $validator)
     {
-        if (count($violations)) {
+        $violations = $validator->validate($customer);
+        if (count($violations) > 0) {
             return $this->view($violations, Response::HTTP_BAD_REQUEST);
         }
 
