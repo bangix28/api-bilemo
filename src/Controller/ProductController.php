@@ -9,7 +9,10 @@ namespace App\Controller;
     use Nelmio\ApiDocBundle\Annotation\Model;
     use Nelmio\ApiDocBundle\Annotation\Security;
     use OpenApi\Annotations as OA;
+    use Symfony\Component\HttpFoundation\Request;
     use Symfony\Component\Routing\Annotation\Route;
+    use Knp\Component\Pager\PaginatorInterface;
+
 
     /**
      * @Route("api/v1/products")
@@ -35,9 +38,14 @@ class ProductController extends AbstractFOSRestController
      * @Rest\View()
      * @Security(name="Bearer")
      */
-    public function listProduct(ProductRepository $Product)
+    public function listProduct(ProductRepository $Product,PaginatorInterface $paginator ,Request $request)
     {
-        return $Product->findAll();
+        $page = $paginator->paginate(
+            $Product->findAll(), /* query NOT result */
+            $request->query->getInt('page', 1), /*page number*/
+            10 /*limit per page*/
+        );
+        return $page->result();
     }
 
     /**
