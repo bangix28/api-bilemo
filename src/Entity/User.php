@@ -40,7 +40,7 @@ class User implements UserInterface
      * @var string
      *
      * @ORM\Column(name="password", type="string", length=255, nullable=false)
-     *@Serializer\Groups({"login"})
+     * @Serializer\Groups({"login"})
      * @Assert\NotBlank
      */
     private $password;
@@ -129,6 +129,7 @@ class User implements UserInterface
 
         return $this;
     }
+
     public function getRoles(): ?array
     {
         return $this->roles;
