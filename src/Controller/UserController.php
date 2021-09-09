@@ -8,15 +8,18 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
+use JMS\Serializer\SerializationContext;
+use Knp\Component\Pager\PaginatorInterface;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Annotations as OA;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use OpenApi\Annotations as OA;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
 
 
 /**
@@ -50,7 +53,7 @@ class UserController extends AbstractFOSRestController
      *     path="v1/customers/{customer}/users",
      *     name="user_create"
      * )
-     *  @OA\Response(
+     * @OA\Response(
      *     response=200,
      *     description="Create a new User",
      *     @OA\JsonContent(
@@ -58,7 +61,10 @@ class UserController extends AbstractFOSRestController
      *        @OA\Items(ref=@Model(type=User::class, groups={"details"}))
      *     )
      * )
-     *
+     * @OA\RequestBody(
+     *          required=true,
+     *          @OA\JsonContent(ref="#/components/schemas/UserCreate")
+     *      ),
      * @ParamConverter("user",converter="fos_rest.request_body")
      * @Rest\View(statusCode=201, serializerGroups={"details"})
      * @OA\Tag(name="Customers")
@@ -69,13 +75,12 @@ class UserController extends AbstractFOSRestController
         if (count($violations) > 0) {
             return $this->view($violations, Response::HTTP_BAD_REQUEST);
         }
-
         $token = $request->headers->get('Authorization');
         if ($token === $customer->getToken()) {
             $user->setCustomer($customer);
             $hash_pass = $this->encoder->encodePassword($user, $user->getPassword());
             $user->setPassword($hash_pass);
-            $user->setCustomer($customer);
+            $user->setRoles(array("USER"));
             $error = $this->validator->validate($user);
             if (count($error)) {
                 return $this->view($error, Response::HTTP_BAD_REQUEST);
@@ -158,21 +163,35 @@ class UserController extends AbstractFOSRestController
      *     description="List User of customer",
      *     @OA\JsonContent(
      *        type="array",
-     *        @OA\Items(ref=@Model(type=User::class, groups={"details"}))
+     *        @OA\Items(ref=@Model(type=User::class))
      *     )
      * )
-     *
+     * @OA\Parameter(
+     *     name="page",
+     *     in="query",
+     *     description="le numéro de la page",
+     *     @OA\Schema(type="string")
+     * )
      * @OA\Tag(name="Customers")
      * @Rest\View(serializerGroups={"details"})
      */
-    public function ListUser(Customer $customer,UserRepository $userRepository,Request $request)
+    public function ListUser(Customer $customer, PaginatorInterface $paginator, SerializerInterface $serializer, Request $request)
     {
         $token = $request->headers->get('Authorization');
         if ($token === $customer->getToken()) {
-        return $this->view(array(
-            "users" => $customer->getUsers(),
-            "societe" => $customer
-        ));
+            $pagination = $paginator->paginate(
+                $customer->getUsers(),
+                $request->query->getInt('page', 1),
+                10
+            );
+            $pagerResult = [
+                'count' => $pagination->getTotalItemCount(),
+                'items' => $pagination->getItems(),
+                'limit' => $pagination->getItemNumberPerPage(),
+                'current' => $pagination->getCurrentPageNumber()
+            ];
+            return $this->view($pagerResult, RESPONSE::HTTP_OK);
+
         }
         return $this->view('wrong token', Response::HTTP_BAD_REQUEST);
     }
