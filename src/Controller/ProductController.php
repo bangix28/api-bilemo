@@ -6,12 +6,16 @@ namespace App\Controller;
     use App\Repository\ProductRepository;
     use FOS\RestBundle\Controller\AbstractFOSRestController;
     use FOS\RestBundle\Controller\Annotations as Rest;
+    use JMS\Serializer\SerializerInterface;
     use Nelmio\ApiDocBundle\Annotation\Model;
     use Nelmio\ApiDocBundle\Annotation\Security;
     use OpenApi\Annotations as OA;
+    use Symfony\Component\HttpFoundation\JsonResponse;
     use Symfony\Component\HttpFoundation\Request;
+    use Symfony\Component\HttpFoundation\Response;
     use Symfony\Component\Routing\Annotation\Route;
     use Knp\Component\Pager\PaginatorInterface;
+
 
 
     /**
@@ -33,19 +37,31 @@ class ProductController extends AbstractFOSRestController
      *        @OA\Items(ref=@Model(type=Product::class))
      *     )
      * )
-     *
+     * @OA\Parameter(
+     *     name="page",
+     *     in="query",
+     *     description="le numéro de la page",
+     *     @OA\Schema(type="string")
+     * )
      * @OA\Tag(name="Products")
-     * @Rest\View()
      * @Security(name="Bearer")
      */
-    public function listProduct(ProductRepository $Product,PaginatorInterface $paginator ,Request $request)
+    public function listProduct(ProductRepository $Product,PaginatorInterface $paginator ,Request $request, SerializerInterface $serializer)
     {
-        $page = $paginator->paginate(
+        $pagination = $paginator->paginate(
             $Product->findAll(), /* query NOT result */
             $request->query->getInt('page', 1), /*page number*/
             10 /*limit per page*/
         );
-        return $page->result();
+        $pagerResult = [
+            'count' => $pagination->getTotalItemCount(),
+            'items' => json_decode($serializer->serialize($pagination->getItems(), "json"), true),
+            'limit' => $pagination->getItemNumberPerPage(),
+            'current' => $pagination->getCurrentPageNumber()
+        ];
+
+        return new JsonResponse($pagerResult,Response::HTTP_OK);
+
     }
 
     /**
