@@ -32,7 +32,7 @@ class User implements UserInterface
      * @ORM\Column(name="email", type="string",length=255, nullable=false)
      * @Assert\NotBlank
      * @Assert\Email()
-     * @Serializer\Groups({"details","login"})
+     * @Serializer\Groups({"details","login","create"})
      */
     private $email;
 
@@ -40,7 +40,7 @@ class User implements UserInterface
      * @var string
      *
      * @ORM\Column(name="password", type="string", length=255, nullable=false)
-     * @Serializer\Groups({"login"})
+     * @Serializer\Groups({"login","create"})
      * @Assert\NotBlank
      */
     private $password;
@@ -50,7 +50,7 @@ class User implements UserInterface
      *
      * @ORM\Column(name="first_name", type="string", length=255, nullable=false)
      * @Assert\NotBlank
-     * @Serializer\Groups({"details"})
+     * @Serializer\Groups({"details","create"})
      */
     private $firstName;
 
@@ -59,7 +59,7 @@ class User implements UserInterface
      *
      * @ORM\Column(name="last_name", type="string", length=255, nullable=false)
      * @Assert\NotBlank
-     * @Serializer\Groups({"details"})
+     * @Serializer\Groups({"details","create"})
      */
     private $lastName;
 
@@ -73,7 +73,6 @@ class User implements UserInterface
 
     /**
      * @ORM\ManyToOne(targetEntity=Customer::class, inversedBy="users")
-     * @Serializer\Groups({"list"})
      */
     private $Customer;
 
@@ -178,12 +177,12 @@ class User implements UserInterface
 
     public function getCustomer(): ?Customer
     {
-        return $this->customer;
+        return $this->Customer;
     }
 
     public function setCustomer(?Customer $customer): self
     {
-        $this->customer = $customer;
+        $this->Customer = $customer;
 
         return $this;
     }

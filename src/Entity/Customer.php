@@ -25,7 +25,6 @@ class Customer implements UserInterface
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
-     * @Serializer\Groups({"details"})
      */
     private $id;
 
@@ -33,12 +32,10 @@ class Customer implements UserInterface
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255, nullable=false)
-     * @Serializer\Groups({"details"})
      */
     private $name;
     /**
      * @ORM\Column(type="string", length=255)
-     * @Serializer\Groups({"details"})
      */
     private $email;
 

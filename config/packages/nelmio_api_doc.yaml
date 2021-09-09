@@ -23,4 +23,5 @@ nelmio_api_doc:
             - /api/v1
             - /v1/
     models:
-        names: [{ alias: User,  type: App\Entity\User, groups: [ login ] }]
+        names: [{ alias: User,  type: App\Entity\User, groups: [ login ] },
+                {alias: UserCreate,  type: App\Entity\User, groups: [ create ]}]
