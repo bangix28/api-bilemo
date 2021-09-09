@@ -73,7 +73,6 @@ class User implements UserInterface
 
     /**
      * @ORM\ManyToOne(targetEntity=Customer::class, inversedBy="users")
-     * @Serializer\Groups({"list"})
      */
     private $Customer;
 
@@ -178,12 +177,12 @@ class User implements UserInterface
 
     public function getCustomer(): ?Customer
     {
-        return $this->customer;
+        return $this->Customer;
     }
 
     public function setCustomer(?Customer $customer): self
     {
-        $this->customer = $customer;
+        $this->Customer = $customer;
 
         return $this;
     }
