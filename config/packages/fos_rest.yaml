@@ -4,7 +4,7 @@ fos_rest:
 #    allowed_methods_listener:  true
 #    routing_loader: true
     view:
-        view_response_listener:  true
+        view_response_listener: true
     body_converter:
         enabled: true
         validate: true
@@ -12,8 +12,9 @@ fos_rest:
     format_listener:
         rules:
             - { path: ^/, prefer_extension: true, fallback_format: json, priorities: [ json, html ] }
-            -
     exception:
-        enabled: true
-        messages: { App\Exception\RessourceException: true }
-        codes: { App\Exception\RessourceException: 400, \Exception: 429 }
+        codes:
+            'Symfony\Component\HttpKernel\Exception\NotFoundHttpException': 404
+            'Doctrine\ORM\OptimisticLockException': HTTP_CONFLICT
+        messages:
+            'Symfony\Component\Routing\Exception\ResourceNotFoundException': true
